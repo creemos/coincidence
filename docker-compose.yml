@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8989:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5454/mydb
+      SPRING_DATASOURCE_USERNAME: itsuser
+      SPRING_DATASOURCE_PASSWORD: itspass
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    ports:
+      - "5454:5432"
+    environment:
+      POSTGRES_USER: itsuser
+      POSTGRES_PASSWORD: itspass
+      POSTGRES_DB: db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
