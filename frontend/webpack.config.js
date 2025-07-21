@@ -9,12 +9,22 @@ module.exports = {
     filename: 'bundle.js',
     clean: true,
   },
+  devServer: {
+    static: './dist',
+    port: 3000,
+    open: true,
+    hot: true,
+  },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/i,
         loader: 'babel-loader',
         exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
     ],
   },
@@ -26,10 +36,4 @@ module.exports = {
       template: './public/index.html',
     }),
   ],
-  devServer: {
-    static: './dist',
-    port: 3000,
-    open: true,
-    hot: true,
-  },
 };
