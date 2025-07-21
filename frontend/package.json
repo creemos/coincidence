@@ -10,23 +10,24 @@
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.11",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.2",
     "@babel/preset-env": "^7.23.2",
     "@babel/preset-react": "^7.23.2",
-    "autoprefixer": "^10.x.x",
+    "autoprefixer": "^10.4.21",
     "babel-loader": "^9.1.2",
     "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.5.3",
-    "postcss": "^8.x.x",
+    "postcss": "^8.5.6",
     "postcss-loader": "^8.1.1",
     "style-loader": "^4.0.0",
-    "tailwindcss": "^4.x.x",
+    "tailwindcss": "^4.1.11",
     "webpack": "^5.76.3",
     "webpack-cli": "^5.0.1",
-    "webpack-dev-server": "^4.13.3"
+    "webpack-dev-server": "^5.2.2"
   },
   "bin": {
     "tailwindcss": "node_modules/tailwindcss/cli.js"
