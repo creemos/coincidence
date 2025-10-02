@@ -10,8 +10,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author kay 25.03.2025
@@ -28,17 +30,13 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    Integer id;
+    Long id;
 
     @Column(name = "login")
     String login;
 
     @Column(name = "password")
     String password;
-
-    @Column(name = "role")
-    @Enumerated(EnumType.STRING)
-    private Role role;
 
     @Column(name = "surname")
     String surname;
@@ -52,30 +50,35 @@ public class User implements UserDetails {
     @Column(name = "is_blocked")
     Boolean isBlocked;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<UserRole> userRoles = new ArrayList<>();
 
-    @Override
-    public String getPassword() {
-        return "";
-    }
 
     @Override
     public String getUsername() {
         return login;
     }
 
-    public enum Role {
-        ADMIN,
-        USER
+    @Override
+    public String getPassword() {
+        return password;
     }
 
-    public User(String login, String password, Role role) {
-        this.login = login;
-        this.password = password;
-        this.role = role;
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+    @Override
+    public boolean isEnabled() { return true; }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return userRoles.stream()
+                .map(userRole -> new SimpleGrantedAuthority(userRole.getAuthority().getName()))
+                .collect(Collectors.toList());
     }
 
 }

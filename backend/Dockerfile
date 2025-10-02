@@ -1,17 +1,19 @@
-FROM maven:3.8.5-openjdk-17 AS builder
+# Этап сборки
+FROM maven:3.9-eclipse-temurin-21 AS build
+
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
+
+# Сборка JAR
 RUN mvn clean package -DskipTests
 
-FROM openjdk:17-jdk
+# Этап запуска (опционально — можно использовать один слой)
+FROM eclipse-temurin:21-jre-alpine
 
-ENV LANG=en_US.UTF-8 \
-    LANGUAGE=en_US:en \
-    LC_ALL=en_US.UTF-8
-
-COPY --from=builder /app/target/*.jar app.jar
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
