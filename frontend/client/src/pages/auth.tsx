@@ -145,15 +145,15 @@ export default function Auth() {
                 <form onSubmit={signInForm.handleSubmit(onSignIn)} className="space-y-4" data-testid="form-signin">
                   <FormField
                     control={signInForm.control}
-                    name="email"
+                    name="username"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
                           <Input
-                            placeholder="Адрес эл. почты"
-                            type="email"
+                            placeholder="Имя пользователя"
+                            type="username"
                             className="p-4 rounded-xl input-focus border-2"
-                            data-testid="input-email"
+                            data-testid="input-username"
                             {...field}
                           />
                         </FormControl>
