@@ -43,3 +43,7 @@ frontend/.config
 frontend/.local
 frontend/dist
 frontend/shared
+/backend/src/test/java/ru/coincidence/CoincidenceApplicationTests.java
+/backend/HELP.md
+/backend/mvnw
+/backend/mvnw.cmd

@@ -18,7 +18,7 @@ export default function Auth() {
   const signInForm = useForm<SignInData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
@@ -36,20 +36,57 @@ export default function Auth() {
 
   const onSignIn = async (data: SignInData) => {
     try {
-      // In a real app, this would make an API call
-      console.log("Sign in data:", data);
-      toast({
-        title: "Успешно",
-        description: "Вы вошли в систему!",
-      });
-      setLocation("/test");
-    } catch (error) {
-      toast({
-        title: "Ошибка",
-        description: "Не удалось войти. Попробуйте снова.",
-        variant: "destructive",
-      });
-    }
+        const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8989';
+        const response = await fetch(`${API_BASE}/api/auth/signup`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          // Бэкенд вернул ошибку (4xx, 5xx)
+          const errorMessage = result.message || 'Не удалось создать аккаунт. Попробуйте снова.';
+          toast({
+            title: "Ошибка",
+            description: errorMessage,
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Успешно: получаем JWT-токен
+        const { token } = result;
+
+        if (!token) {
+          throw new Error('Токен не получен');
+        }
+
+        // Сохраняем токен (например, в localStorage)
+        localStorage.setItem('authToken', token);
+
+        // Опционально: обновить состояние авторизации в контексте или Redux
+        // Например: setUser({ token }); или dispatch(setToken(token));
+
+        toast({
+          title: "Успешно",
+          description: "Аккаунт создан!",
+        });
+
+        // Перенаправляем пользователя
+        setLocation("/profile");
+
+      } catch (error) {
+        console.error('Sign up error:', error);
+        toast({
+          title: "Ошибка",
+          description: "Не удалось подключиться к серверу. Попробуйте позже.",
+          variant: "destructive",
+        });
+      }
   };
 
   const onSignUp = async (data: SignUpData) => {
