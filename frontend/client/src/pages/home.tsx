@@ -31,7 +31,7 @@ export default function Home() {
               size="lg"
               data-testid="button-get-started"
             >
-              Начать 💖
+              Начать! 💖
             </Button>
           </Link>
           <Link href="/auth">
