@@ -30,6 +30,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+        System.out.println(">>> Received login request: " + request);
         // Аутентифицируем пользователя
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
