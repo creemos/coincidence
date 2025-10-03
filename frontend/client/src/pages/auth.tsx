@@ -37,7 +37,7 @@ export default function Auth() {
   const onSignIn = async (data: SignInData) => {
     try {
         const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8989';
-        const response = await fetch(`${API_BASE}/api/auth/signup`, {
+        const response = await fetch(`${API_BASE}/api/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
