@@ -34,7 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+        System.out.println(">>> ServletPath: " + request.getServletPath());
         String servletPath = request.getServletPath();
+
+        if (request.getMethod().equals("OPTIONS")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // 1. Пропускаем публичные эндпоинты без проверки токена
         if (servletPath.startsWith("/api/auth")) {
