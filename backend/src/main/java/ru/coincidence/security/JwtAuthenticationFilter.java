@@ -34,38 +34,54 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+        String servletPath = request.getServletPath();
+
+        // 1. Пропускаем публичные эндпоинты без проверки токена
+        if (servletPath.startsWith("/api/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 2. Для всех остальных — токен обязателен
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String username;
-
-        if (request.getServletPath().startsWith("/api/auth")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+            // Токен отсутствует → ошибка 401
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write(
+                    "{\"error\": \"Authentication required\", " +
+                            "\"message\": \"Please provide a valid JWT token in the Authorization header.\", " +
+                            "\"status\": 401}"
+            );
             return;
         }
 
-        jwt = authHeader.substring(7); // "Bearer " -> 7 символов
-        username = jwtService.extractUsername(jwt);
+        // 3. Валидация токена
+        try {
+            String jwt = authHeader.substring(7);
+            String username = jwtService.extractUsername(jwt);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write(
+                    "{\"error\": \"Invalid token\", " +
+                            "\"message\": \"JWT token is invalid or expired.\", " +
+                            "\"status\": 401}"
+            );
         }
-
-        filterChain.doFilter(request, response);
     }
 }
