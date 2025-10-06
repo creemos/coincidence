@@ -25,6 +25,7 @@ import ru.coincidence.entity.User;
 import ru.coincidence.entity.UserRole;
 import ru.coincidence.repository.AuthorityRepository;
 import ru.coincidence.repository.UserRepository;
+import ru.coincidence.repository.UserRoleRepository;
 import ru.coincidence.service.JwtService;
 
 import java.util.Map;
@@ -43,6 +44,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final AuthorityRepository authorityRepository;
+    private final UserRoleRepository userRoleRepository;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
@@ -107,11 +109,13 @@ public class AuthController {
         UserRole userRole = new UserRole();
         userRole.setUser(user);
         userRole.setAuthority(userAuthority);
+        userRoleRepository.save(userRole);
 
         user.getUserRoles().add(userRole);
 
         // 5. Сохраняем в БД
         userRepository.save(user);
+
 
         // 6. Генерируем токен
         UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()

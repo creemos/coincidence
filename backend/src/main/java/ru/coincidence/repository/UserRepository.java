@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import ru.coincidence.entity.Authority;
 import ru.coincidence.entity.User;
 
 import java.util.Optional;
@@ -15,5 +16,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("SELECT u FROM User u JOIN FETCH u.userRoles ur JOIN FETCH ur.authority WHERE u.login = :login")
     Optional<User> findByLoginWithAuthorities(@Param("login") String login);
+
+    @Query("insert into ")
+    void saveUserAuthority(@Param("user") User user, @Param("authority") Authority authority);
 
 }
