@@ -14,6 +14,6 @@ import java.util.Optional;
  */
 @Repository
 public interface AuthorityRepository extends JpaRepository<Authority, Integer> {
-    @Query("select a from Authority where a.name = :name")
+    @Query("select a from Authority a where a.name = :name")
     Optional<Authority> findByName(@Param("name") String name);
 }
