@@ -10,13 +10,21 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.coincidence.dto.AuthRequest;
 import ru.coincidence.dto.AuthResponse;
+import ru.coincidence.dto.SignUpRequest;
+import ru.coincidence.entity.Authority;
+import ru.coincidence.entity.User;
+import ru.coincidence.entity.UserRole;
+import ru.coincidence.repository.AuthorityRepository;
+import ru.coincidence.repository.UserRepository;
 import ru.coincidence.service.JwtService;
 
 import java.util.Map;
@@ -32,6 +40,9 @@ public class AuthController {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final AuthorityRepository authorityRepository;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
@@ -65,6 +76,52 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Authentication failed"));
         }
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> register(@RequestBody SignUpRequest request) {
+        // 1. Проверяем, существует ли пользователь
+        try {
+            userDetailsService.loadUserByUsername(request.username());
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "User with this username already exists"));
+        } catch (UsernameNotFoundException ignored) {
+            // Пользователь не найден — можно создавать
+        }
+
+        // 2. Шифруем пароль
+        String encodedPassword = passwordEncoder.encode(request.password());
+
+        // 3. Создаём пользователя
+        User user = new User();
+        user.setLogin(request.username());
+        user.setPassword(encodedPassword);
+        user.setSurname(request.surname());
+        user.setFirstname(request.firstname());
+        user.setIsBlocked(false);
+
+        // 4. Назначаем роль USER
+        Authority userAuthority = authorityRepository.findByName("USER")
+                .orElseThrow(() -> new RuntimeException("Authority 'USER' not found in database"));
+
+        UserRole userRole = new UserRole();
+        userRole.setUser(user);
+        userRole.setAuthority(userAuthority);
+
+        user.getUserRoles().add(userRole);
+
+        // 5. Сохраняем в БД
+        userRepository.save(user);
+
+        // 6. Генерируем токен
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .authorities(user.getAuthorities())
+                .build();
+
+        String token = jwtService.generateToken(userDetails);
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 
 }

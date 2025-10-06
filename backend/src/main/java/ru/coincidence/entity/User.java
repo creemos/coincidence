@@ -44,9 +44,6 @@ public class User implements UserDetails {
     @Column(name = "firstname")
     String firstname;
 
-    @Column(name = "patrname")
-    String patrname;
-
     @Column(name = "is_blocked")
     Boolean isBlocked;
 
