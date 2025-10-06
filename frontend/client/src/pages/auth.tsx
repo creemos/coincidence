@@ -48,7 +48,6 @@ export default function Auth() {
         const result = await response.json();
 
         if (!response.ok) {
-          // Бэкенд вернул ошибку (4xx, 5xx)
           const errorMessage = result.message || 'Не удалось авторизоваться. Попробуйте снова.';
           toast({
             title: "Ошибка",
@@ -58,29 +57,23 @@ export default function Auth() {
           return;
         }
 
-        // Успешно: получаем JWT-токен
         const { token } = result;
 
         if (!token) {
           throw new Error('Токен не получен');
         }
 
-        // Сохраняем токен (например, в localStorage)
         localStorage.setItem('authToken', token);
-
-        // Опционально: обновить состояние авторизации в контексте или Redux
-        // Например: setUser({ token }); или dispatch(setToken(token));
 
         toast({
           title: "Успешно",
           description: "Вы вошли!",
         });
 
-        // Перенаправляем пользователя
         setLocation("/profile");
 
       } catch (error) {
-        console.error('Sign up error:', error);
+        console.error('Sign in error:', error);
         toast({
           title: "Ошибка",
           description: "Не удалось подключиться к серверу. Попробуйте позже.",
@@ -102,7 +95,6 @@ export default function Auth() {
         const result = await response.json();
 
         if (!response.ok) {
-          // Бэкенд вернул ошибку (4xx, 5xx)
           const errorMessage = result.message || 'Не удалось создать аккаунт. Попробуйте снова.';
           toast({
             title: "Ошибка",
@@ -112,25 +104,19 @@ export default function Auth() {
           return;
         }
 
-        // Успешно: получаем JWT-токен
         const { token } = result;
 
         if (!token) {
           throw new Error('Токен не получен');
         }
 
-        // Сохраняем токен (например, в localStorage)
         localStorage.setItem('authToken', token);
-
-        // Опционально: обновить состояние авторизации в контексте или Redux
-        // Например: setUser({ token }); или dispatch(setToken(token));
 
         toast({
           title: "Успешно",
           description: "Аккаунт создан!",
         });
 
-        // Перенаправляем пользователя
         setLocation("/profile");
 
       } catch (error) {
@@ -158,7 +144,7 @@ export default function Auth() {
               <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">Добро пожаловать</h2>
               <p className="text-muted-foreground">Войдите, чтобы продолжить своё путешествие ✨</p>
             </div>
-            
+
             <div className="flex space-x-2 mb-6">
               <Button
                 onClick={() => setIsSignUp(false)}
@@ -175,7 +161,7 @@ export default function Auth() {
                 Регистрация
               </Button>
             </div>
-            
+
             {!isSignUp ? (
               <Form {...signInForm}>
                 <form onSubmit={signInForm.handleSubmit(onSignIn)} className="space-y-4" data-testid="form-signin">
@@ -187,7 +173,7 @@ export default function Auth() {
                         <FormControl>
                           <Input
                             placeholder="Имя пользователя"
-                            type="username"
+                            type="text"
                             className="p-4 rounded-xl input-focus border-2"
                             data-testid="input-username"
                             {...field}
@@ -197,7 +183,7 @@ export default function Auth() {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={signInForm.control}
                     name="password"
@@ -216,7 +202,7 @@ export default function Auth() {
                       </FormItem>
                     )}
                   />
-                  
+
                   <Button
                     type="submit"
                     className="w-full btn-primary text-primary-foreground py-4 rounded-xl font-semibold text-lg card-hover"
@@ -263,7 +249,7 @@ export default function Auth() {
                         </FormItem>
                       )}
                     />
-                  
+
                   <FormField
                     control={signUpForm.control}
                     name="username"
@@ -281,7 +267,7 @@ export default function Auth() {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={signUpForm.control}
                     name="email"
@@ -300,7 +286,7 @@ export default function Auth() {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={signUpForm.control}
                     name="password"
@@ -319,7 +305,7 @@ export default function Auth() {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={signUpForm.control}
                     name="confirmPassword"
@@ -338,7 +324,7 @@ export default function Auth() {
                       </FormItem>
                     )}
                   />
-                  
+
                   <Button
                     type="submit"
                     className="w-full btn-primary text-primary-foreground py-4 rounded-xl font-semibold text-lg card-hover"
@@ -349,7 +335,7 @@ export default function Auth() {
                 </form>
               </Form>
             )}
-            
+
             <div className="mt-6 text-center">
               <p className="text-muted-foreground text-sm">
                 Продолжая, вы соглашаетесь с нашими{" "}
