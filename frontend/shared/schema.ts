@@ -38,10 +38,15 @@ export const signInSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-export const signUpSchema = insertUserSchema.extend({
+export const signUpSchema = z.object({
+  firstname: z.string().min(1, "Имя обязательно"),
+  surname: z.string().min(1, "Фамилия обязательна"),
+  username: z.string().min(3, "Имя пользователя должно быть не короче 3 символов"),
+  email: z.string().email("Неверный email"),
+  password: z.string().min(6, "Пароль должен быть не короче 6 символов"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "Пароли не совпадают",
   path: ["confirmPassword"],
 });
 

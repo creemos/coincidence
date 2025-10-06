@@ -23,17 +23,18 @@ export default function Auth() {
     },
   });
 
-  const signUpForm = useForm<SignUpData>({
-    resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      surname: "",
-      firstname: "",
-      email: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
+  const SignUpForm = () => {
+    const signUpForm = useForm<SignUpData>({
+      resolver: zodResolver(signUpSchema),
+      defaultValues: {
+        firstname: '',
+        surname: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+      },
+    });
 
   const onSignIn = async (data: SignInData) => {
     try {
@@ -91,56 +92,56 @@ export default function Auth() {
 
   const onSignUp = async (data: SignUpData) => {
     try {
-            const response = await fetch(`/api/auth/signup`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(data),
-            });
+        const response = await fetch(`/api/auth/signup`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
 
-            const result = await response.json();
+        const result = await response.json();
 
-            if (!response.ok) {
-              // Бэкенд вернул ошибку (4xx, 5xx)
-              const errorMessage = result.message || 'Не удалось создать аккаунт. Попробуйте снова.';
-              toast({
-                title: "Ошибка",
-                description: errorMessage,
-                variant: "destructive",
-              });
-              return;
-            }
+        if (!response.ok) {
+          // Бэкенд вернул ошибку (4xx, 5xx)
+          const errorMessage = result.message || 'Не удалось создать аккаунт. Попробуйте снова.';
+          toast({
+            title: "Ошибка",
+            description: errorMessage,
+            variant: "destructive",
+          });
+          return;
+        }
 
-            // Успешно: получаем JWT-токен
-            const { token } = result;
+        // Успешно: получаем JWT-токен
+        const { token } = result;
 
-            if (!token) {
-              throw new Error('Токен не получен');
-            }
+        if (!token) {
+          throw new Error('Токен не получен');
+        }
 
-            // Сохраняем токен (например, в localStorage)
-            localStorage.setItem('authToken', token);
+        // Сохраняем токен (например, в localStorage)
+        localStorage.setItem('authToken', token);
 
-            // Опционально: обновить состояние авторизации в контексте или Redux
-            // Например: setUser({ token }); или dispatch(setToken(token));
+        // Опционально: обновить состояние авторизации в контексте или Redux
+        // Например: setUser({ token }); или dispatch(setToken(token));
 
-            toast({
-              title: "Успешно",
-              description: "Аккаунт создан!",
-            });
+        toast({
+          title: "Успешно",
+          description: "Аккаунт создан!",
+        });
 
-            // Перенаправляем пользователя
-            setLocation("/profile");
+        // Перенаправляем пользователя
+        setLocation("/profile");
 
-          } catch (error) {
-            console.error('Sign up error:', error);
-            toast({
-              title: "Ошибка",
-              description: "Не удалось подключиться к серверу. Попробуйте позже.",
-              variant: "destructive",
-            });
-          }
+      } catch (error) {
+        console.error('Sign up error:', error);
+        toast({
+          title: "Ошибка",
+          description: "Не удалось подключиться к серверу. Попробуйте позже.",
+          variant: "destructive",
+        });
+      }
   };
 
   return (
@@ -247,22 +248,22 @@ export default function Auth() {
                     )}
                   />
                   <FormField
-                                      control={signUpForm.control}
-                                      name="surname"
-                                      render={({ field }) => (
-                                        <FormItem>
-                                          <FormControl>
-                                            <Input
-                                              placeholder="Фамилия"
-                                              className="p-4 rounded-xl input-focus border-2"
-                                              data-testid="input-surname"
-                                              {...field}
-                                            />
-                                          </FormControl>
-                                          <FormMessage />
-                                        </FormItem>
-                                      )}
-                                    />
+                      control={signUpForm.control}
+                      name="surname"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              placeholder="Фамилия"
+                              className="p-4 rounded-xl input-focus border-2"
+                              data-testid="input-surname"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   
                   <FormField
                     control={signUpForm.control}
