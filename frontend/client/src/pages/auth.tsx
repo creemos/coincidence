@@ -23,18 +23,17 @@ export default function Auth() {
     },
   });
 
-  const SignUpForm = () => {
-    const signUpForm = useForm<SignUpData>({
-      resolver: zodResolver(signUpSchema),
-      defaultValues: {
-        firstname: '',
-        surname: '',
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-      },
-    });
+  const signUpForm = useForm<SignUpData>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      firstname: '',
+      surname: '',
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
 
   const onSignIn = async (data: SignInData) => {
     try {
@@ -364,5 +363,4 @@ export default function Auth() {
       </div>
     </div>
   );
-}
 }
