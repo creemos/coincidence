@@ -13,7 +13,7 @@ import java.util.Optional;
 @Configuration
 public class DataLoader {
 
-    @Bean
+    /*@Bean
     CommandLineRunner initDatabase(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             Optional<User> admin = userRepository.findByLogin("admin");
@@ -22,6 +22,6 @@ public class DataLoader {
             userRepository.save(a);
             //userRepository.save(new User("admin", passwordEncoder.encode("123456"), User.Role.ADMIN));
         };
-    }
+    }*/
 
 }
