@@ -27,12 +27,12 @@ export default function Auth() {
     const signUpForm = useForm<SignUpData>({
       resolver: zodResolver(signUpSchema),
       defaultValues: {
-        firstname: '',
-        surname: '',
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
+        firstname: "",
+        surname: "",
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
       },
     });
 
