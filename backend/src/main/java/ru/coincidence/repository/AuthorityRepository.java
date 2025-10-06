@@ -2,6 +2,8 @@ package ru.coincidence.repository;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.coincidence.entity.Authority;
 
@@ -12,5 +14,6 @@ import java.util.Optional;
  */
 @Repository
 public interface AuthorityRepository extends JpaRepository<Authority, Integer> {
-    Optional<Authority> findByName(String name);
+    @Query("select a from Authority where a.name = :name")
+    Optional<Authority> findByName(@Param("name") String name);
 }
