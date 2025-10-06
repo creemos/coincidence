@@ -164,7 +164,7 @@ export default function Auth() {
 
             {!isSignUp ? (
               <Form {...signInForm}>
-                <form onSubmit={signInForm.handleSubmit(onSignIn)} className="space-y-4" data-testid="form-signin">
+                <form key="signin" onSubmit={signInForm.handleSubmit(onSignIn)} className="space-y-4" data-testid="form-signin">
                   <FormField
                     control={signInForm.control}
                     name="username"
@@ -214,7 +214,7 @@ export default function Auth() {
               </Form>
             ) : (
               <Form {...signUpForm}>
-                <form onSubmit={signUpForm.handleSubmit(onSignUp)} className="space-y-4" data-testid="form-signup">
+                <form key="signup" onSubmit={signUpForm.handleSubmit(onSignUp)} className="space-y-4" data-testid="form-signup">
                   <FormField
                     control={signUpForm.control}
                     name="firstname"
