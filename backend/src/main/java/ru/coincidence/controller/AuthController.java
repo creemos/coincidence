@@ -106,16 +106,15 @@ public class AuthController {
         Authority userAuthority = authorityRepository.findByName("USER")
                 .orElseThrow(() -> new RuntimeException("Authority 'USER' not found in database"));
 
+        // 5. Сохраняем в БД
+        userRepository.save(user);
+
         UserRole userRole = new UserRole();
         userRole.setUser(user);
         userRole.setAuthority(userAuthority);
         userRoleRepository.save(userRole);
 
         user.getUserRoles().add(userRole);
-
-        // 5. Сохраняем в БД
-        userRepository.save(user);
-
 
         // 6. Генерируем токен
         UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
