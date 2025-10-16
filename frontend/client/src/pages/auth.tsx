@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,11 +9,20 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema, signUpSchema, type SignInData, type SignUpData } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Auth() {
   const [, setLocation] = useLocation();
   const [isSignUp, setIsSignUp] = useState(false);
   const { toast } = useToast();
+  const { isAuthenticated, login } = useAuth();
+
+  // Редирект для уже авторизованных пользователей
+  useEffect(() => {
+    if (isAuthenticated) {
+      setLocation("/profile");
+    }
+  }, [isAuthenticated, setLocation]);
 
   const signInForm = useForm<SignInData>({
     resolver: zodResolver(signInSchema),
@@ -63,7 +72,8 @@ export default function Auth() {
           throw new Error('Токен не получен');
         }
 
-        localStorage.setItem('authToken', token);
+        // Используем метод login из AuthContext
+        login(token);
 
         toast({
           title: "Успешно",
@@ -110,7 +120,8 @@ export default function Auth() {
           throw new Error('Токен не получен');
         }
 
-        localStorage.setItem('authToken', token);
+        // Используем метод login из AuthContext
+        login(token);
 
         toast({
           title: "Успешно",

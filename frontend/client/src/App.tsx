@@ -3,6 +3,8 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { PrivateRoute } from "@/components/PrivateRoute";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Home from "@/pages/home";
@@ -19,15 +21,47 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <Switch>
+      {/* Публичные маршруты */}
       <Route path="/" component={Home} />
       <Route path="/auth" component={Auth} />
-      <Route path="/test" component={Test} />
-      <Route path="/results" component={Results} />
-      <Route path="/feed" component={Feed} />
-      <Route path="/chats" component={Chats} />
-      <Route path="/chat/:id" component={Chat} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/prime" component={Prime} />
+      
+      {/* Защищённые маршруты */}
+      <Route path="/test">
+        <PrivateRoute>
+          <Test />
+        </PrivateRoute>
+      </Route>
+      <Route path="/results">
+        <PrivateRoute>
+          <Results />
+        </PrivateRoute>
+      </Route>
+      <Route path="/feed">
+        <PrivateRoute>
+          <Feed />
+        </PrivateRoute>
+      </Route>
+      <Route path="/chats">
+        <PrivateRoute>
+          <Chats />
+        </PrivateRoute>
+      </Route>
+      <Route path="/chat/:id">
+        <PrivateRoute>
+          <Chat />
+        </PrivateRoute>
+      </Route>
+      <Route path="/profile">
+        <PrivateRoute>
+          <Profile />
+        </PrivateRoute>
+      </Route>
+      <Route path="/prime">
+        <PrivateRoute>
+          <Prime />
+        </PrivateRoute>
+      </Route>
+      
       <Route component={NotFound} />
     </Switch>
   );
@@ -37,14 +71,16 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="min-h-screen bg-background flex flex-col">
-          <Header />
-          <main className="flex-1">
-            <Router />
-          </main>
-          <Footer />
-          <Toaster />
-        </div>
+        <AuthProvider>
+          <div className="min-h-screen bg-background flex flex-col">
+            <Header />
+            <main className="flex-1">
+              <Router />
+            </main>
+            <Footer />
+            <Toaster />
+          </div>
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

@@ -1,8 +1,16 @@
 import { Link, useLocation } from "wouter";
-import { Heart, Home, Users, MessageCircle, User, Target, Crown } from "lucide-react";
+import { Heart, Home, Users, MessageCircle, User, Target, Crown, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 
 export default function Header() {
   const [location] = useLocation();
+  const { isAuthenticated, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = "/auth";
+  };
 
   const navItems = [
     { path: "/", label: "Главная", icon: Home },
@@ -52,6 +60,19 @@ export default function Header() {
                 </Link>
               );
             })}
+            
+            {/* Logout button для авторизованных пользователей */}
+            {isAuthenticated && (
+              <Button
+                onClick={handleLogout}
+                variant="ghost"
+                className="flex items-center space-x-2 px-4 py-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-primary/10 hover:backdrop-blur-sm hover:transform hover:scale-105 transition-all duration-300"
+                data-testid="button-logout"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="font-medium">Выход</span>
+              </Button>
+            )}
           </nav>
 
           {/* Mobile Navigation Button */}

@@ -31,39 +31,47 @@ The app follows a pages-based routing structure with dedicated pages for home, a
 
 ## Backend Architecture
 
-The backend uses a minimal Express.js setup with TypeScript:
+The backend uses Spring Boot with Java:
 
-- **Framework**: Express.js with TypeScript
-- **Database ORM**: Drizzle ORM for type-safe database operations
-- **Storage Pattern**: Interface-based storage abstraction allowing for both in-memory and database implementations
+- **Framework**: Spring Boot 3.5.4 with Java 19
+- **Database ORM**: Spring Data JPA with Hibernate for database operations
+- **Security**: Spring Security with JWT authentication
 - **API Design**: RESTful API structure with `/api` prefix for all routes
-- **Development Setup**: Hot reloading with Vite integration for full-stack development
+- **Build Tool**: Maven for dependency management and building
 
-The server implements a modular route registration system and includes middleware for request logging and error handling.
+The server implements authentication endpoints (`/api/auth/login`, `/api/auth/signup`), user management (`/api/users`), and JWT-based security. The backend runs on port 8080 and the frontend proxies API requests to it.
 
 ## Data Storage Solutions
 
-- **Database**: PostgreSQL as the primary database (configured via Drizzle)
-- **ORM**: Drizzle ORM with schema-first approach
-- **Schema Management**: Centralized schema definitions in `/shared/schema.ts`
-- **Validation**: Zod schemas for runtime validation matching database schemas
-- **Storage Abstraction**: Interface-based storage layer supporting both in-memory (development) and database (production) implementations
+- **Database**: PostgreSQL via Replit's Neon database integration
+- **ORM**: Spring Data JPA with Hibernate
+- **Schema Management**: Hibernate auto-generates schema from JPA entities
+- **Entities**: User, Authority, and UserRole entities with proper relationships
 
-The database schema includes tables for users, test results, and matches, with proper relationships and constraints defined.
+The database schema includes tables for users, authorities, and user-authority relationships. The backend is configured to automatically update the schema based on JPA entity definitions.
 
 ## Authentication and Authorization
 
-Currently implements a mock authentication system:
+Implements JWT-based authentication:
 
 - **Frontend**: Form-based authentication using React Hook Form and Zod validation
-- **Session Management**: Placeholder for session-based authentication (connect-pg-simple dependency indicates planned PostgreSQL session store)
-- **Route Protection**: Ready for implementation with the established routing structure
+- **Backend**: Spring Security with JWT tokens for stateless authentication
+- **Token Generation**: JWT tokens with configurable expiration time
+- **Password Security**: BCrypt password hashing
+- **Route Protection**: JWT filter for protected endpoints
 
 ## External Dependencies
 
-- **Database**: Neon Database serverless PostgreSQL (@neondatabase/serverless)
+- **Database**: Replit's integrated Neon PostgreSQL database
 - **UI Components**: Radix UI primitives for accessible component foundations
 - **Development Tools**: Replit-specific tooling for development environment integration
-- **Font Services**: Google Fonts for typography (Inter, DM Sans, Fira Code, Geist Mono, Architects Daughter)
+- **Backend Libraries**: Spring Boot, Spring Security, JWT (io.jsonwebtoken), Lombok
 
-The application is designed to be deployed on Replit with specific configurations for the Replit environment, including development banners and cartographer integration for debugging.
+## Replit Environment Setup
+
+The application is configured to run in the Replit environment with:
+- Frontend on port 5000 (Vite dev server with host 0.0.0.0)
+- Backend on port 8080 (Spring Boot application)
+- Frontend proxies `/api` requests to the backend
+- Database credentials managed through Replit environment variables
+- Custom startup script for backend to parse DATABASE_URL into JDBC format
