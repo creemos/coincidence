@@ -1,6 +1,7 @@
 package ru.coincidence.controller;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -125,6 +126,24 @@ public class AuthController {
 
         String token = jwtService.generateToken(userDetails);
         return ResponseEntity.ok(new AuthResponse(token));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshByAccessToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String jwt = authHeader.substring(7);
+        String username = jwtService.extractUsername(jwt);
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+        if (jwtService.isTokenValid(jwt, userDetails)) {
+            String newToken = jwtService.generateToken(userDetails);
+            return ResponseEntity.ok(new AuthResponse(newToken));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 }
