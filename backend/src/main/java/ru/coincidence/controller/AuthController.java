@@ -65,8 +65,9 @@ public class AuthController {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(request.username());
             String jwtToken = jwtService.generateToken(userDetails);
+            long expiresIn = jwtService.getExpirationTimeInSeconds(jwtToken);
 
-            return ResponseEntity.ok(new AuthResponse(jwtToken));
+            return ResponseEntity.ok(new AuthResponse(jwtToken, expiresIn));
 
         } catch (BadCredentialsException e) {
             System.out.println(">>> Invalid credentials: " + e.getMessage());
@@ -124,8 +125,9 @@ public class AuthController {
                 .authorities(user.getAuthorities())
                 .build();
 
-        String token = jwtService.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthResponse(token));
+        String jwtToken = jwtService.generateToken(userDetails);
+        long expiresIn = jwtService.getExpirationTimeInSeconds(jwtToken);
+        return ResponseEntity.ok(new AuthResponse(jwtToken, expiresIn));
     }
 
     @PostMapping("/refresh")
@@ -140,7 +142,8 @@ public class AuthController {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
         if (jwtService.isTokenValid(jwt, userDetails)) {
             String newToken = jwtService.generateToken(userDetails);
-            return ResponseEntity.ok(new AuthResponse(newToken));
+            long expiresIn = jwtService.getExpirationTimeInSeconds(newToken);
+            return ResponseEntity.ok(new AuthResponse(newToken, expiresIn));
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
