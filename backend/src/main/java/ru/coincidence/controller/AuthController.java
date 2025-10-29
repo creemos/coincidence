@@ -65,7 +65,7 @@ public class AuthController {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(request.username());
             String jwtToken = jwtService.generateToken(userDetails);
-            long expiresIn = jwtService.getExpirationTimeInSeconds(jwtToken);
+            long expiresIn = jwtService.getExpirationTime();
 
             return ResponseEntity.ok(new AuthResponse(jwtToken, expiresIn));
 
@@ -125,7 +125,7 @@ public class AuthController {
                 .build();
 
         String jwtToken = jwtService.generateToken(userDetails);
-        long expiresIn = jwtService.getExpirationTimeInSeconds(jwtToken);
+        long expiresIn = jwtService.getExpirationTime();
         return ResponseEntity.ok(new AuthResponse(jwtToken, expiresIn));
     }
 
@@ -141,7 +141,7 @@ public class AuthController {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
         if (jwtService.isTokenValid(jwt, userDetails)) {
             String newToken = jwtService.generateToken(userDetails);
-            long expiresIn = jwtService.getExpirationTimeInSeconds(newToken);
+            long expiresIn = jwtService.getExpirationTime();
             return ResponseEntity.ok(new AuthResponse(newToken, expiresIn));
         }
 
