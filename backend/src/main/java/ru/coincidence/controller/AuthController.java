@@ -96,7 +96,6 @@ public class AuthController {
         // 2. Шифруем пароль
         String encodedPassword = passwordEncoder.encode(request.password());
 
-        // 3. Создаём пользователя
         User user = new User();
         user.setLogin(request.username());
         user.setPassword(encodedPassword);
